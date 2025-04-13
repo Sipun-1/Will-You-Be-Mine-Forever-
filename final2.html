@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will You Be My Girlfriend?</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffa0d1 0%, #eee0e5 100%);
+      overflow: hidden;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff69b4;
+      font-size: 2rem;
+      animation: float 10s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) scale(0.5) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-100vh) scale(1.2) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 30px rgba(79, 75, 75, 0.2);
+      max-width: 600px;
+      margin: auto;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    h1 {
+      color: #e91e63;
+      font-size: 2.5em;
+    }
+
+    .message {
+      font-size: 1.2em;
+      margin-top: 20px;
+      color: #444;
+    }
+
+    .question {
+      margin-top: 30px;
+      font-size: 1.8em;
+      color: #d81b60;
+    }
+
+    .buttons {
+      margin-top: 30px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1em;
+      margin: 10px;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    #yesBtn {
+      background-color: #0811c8;
+      color: white;
+    }
+
+    #yesBtn:hover {
+      background-color: #45a049;
+    }
+
+    #noBtn {
+      background-color: #500202;
+      color: white;
+      position: relative;
+    }
+
+    #noBtn:hover {
+      background-color: #d32f2f;
+    }
+
+    .hidden {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.4em;
+      color: #4a148c;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #angry {
+      font-size: 6rem;
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: none;
+      z-index: 999;
+      animation: bounce 0.5s infinite alternate;
+    }
+
+    @keyframes bounce {
+      from { transform: translate(-50%, -50%) scale(1); }
+      to { transform: translate(-50%, -48%) scale(1.2); }
+    }
+
+    #callBtn {
+      display: none;
+      margin-top: 20px;
+      font-size: 1.2em;
+      background-color: #2196f3;
+      color: white;
+      border-radius: 20px;
+      padding: 12px 20px;
+      text-decoration: none;
+    }
+
+    #callBtn:hover {
+      background-color: #0b7dda;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts -->
+  <div class="hearts" id="hearts"></div>
+
+  <!-- Angry Emoji -->
+  <div id="angry">😠</div>
+
+  <!-- Main container -->
+  <div class="container">
+    <h1>Hey Dear! ❤️</h1>
+    <p class="message">"I cherish our friendship more than words can say 🥰. And because of that deep connection, I've realized my feelings for you have grown into something more 💖. I was hoping you might feel the same way, or be open to seeing if something more could blossom between us 🥺💐?".</p>
+    <h2 class="question">Will you be my girlfriend?</h2>
+    <div class="buttons">
+      <button id="yesBtn">Yes</button>
+      <button id="noBtn">No</button>
+    </div>
+    <p id="response" class="hidden"></p>
+    <a id="callBtn" href="tel:+919876543210">📞 Call Me baby iam waiting for you </a>
+  </div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    // Floating heart generator
+    const heartsContainer = document.getElementById('hearts');
+    setInterval(() => {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.textContent = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = 5 + Math.random() * 5 + 's';
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 10000);
+    }, 300);
+
+    // Elements
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const response = document.getElementById('response');
+    const angry = document.getElementById('angry');
+    const callBtn = document.getElementById('callBtn');
+
+    // YES Button
+    yesBtn.addEventListener('click', () => {
+      response.textContent = "Wow! That means the world to me 🥺. I'm so grateful for our friendship and now this new possibility 💐. I'm really looking forward to exploring this with you. 😊";
+      response.classList.remove('hidden');
+      callBtn.style.display = 'inline-block';
+      launchConfetti();
+    });
+
+    // NO Button hover (escape and angry face)
+    noBtn.addEventListener('mouseover', () => {
+      const x = Math.floor(Math.random() * (window.innerWidth - 100));
+      const y = Math.floor(Math.random() * (window.innerHeight - 100));
+      noBtn.style.position = "absolute";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+      showAngry();
+    });
+
+    // Show angry emoji
+    function showAngry() {
+      angry.style.display = 'block';
+      setTimeout(() => {
+        angry.style.display = 'none';
+      }, 1000);
+    }
+
+    // Confetti animation
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const confetti = [];
+
+      for (let i = 0; i < 150; i++) {
+        confetti.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 100 + 10,
+          color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+          tilt: Math.random() * 10 - 10,
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        confetti.forEach(c => {
+          ctx.beginPath();
+          ctx.fillStyle = c.color;
+          ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2, false);
+          ctx.fill();
+        });
+        update();
+      }
+
+      function update() {
+        confetti.forEach(c => {
+          c.y += Math.cos(c.d) + 2;
+          c.x += Math.sin(c.d) + 1;
+          if (c.y > canvas.height) {
+            c.y = 0;
+            c.x = Math.random() * canvas.width;
+          }
+        });
+      }
+
+      function animate() {
+        draw();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+  </script>
+</body>
+</html>
